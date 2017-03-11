@@ -5,13 +5,10 @@ import re
 class redditBot(object):
 
   def __init__(self):
-    self.bot = praw.Reddit(user_agent='mattTest v0.1',
-                           client_id='UewGNqfLQjLp7A',
-                           client_secret='JU_k-bB-1__6fOFBF9F5HHXJVDs',
-                           username='matt182',
-                           password='KB!35c^E&rHd^4g#n&dG')
+    self.bot = praw.Reddit()
 
-  def crawlSub(self, sub, pattern):
+  def crawlSub(self, sub, pattern,postWhenFound,*commentBody):
+    data={}
     subreddit = self.bot.subreddit(sub)
     comments = subreddit.stream.comments()
     pattern = re.compile(pattern)
@@ -21,12 +18,22 @@ class redditBot(object):
       textLower = text.lower()
       for word in textLower.split():
         if pattern.match(word):
-          print(text)  # Send message
+            data['author']=author.name
+            data['comment']=text
+            data['sub']=subreddit.display_name
+            print(data)
+            if postWhenFound:
+                print("commenting..")
+                comment.reply(commentBody)
+
+
 
 
 def main():
-  letsGo = redditBot()
-  letsGo.crawlSub("worldnews", "^Immelt$")
+  bot = redditBot()
+  # bot.crawlSub("worldnews", "blink-182",True,"I appericiate that you spelt it blink-182 and not blink 182")
+    bot.crawlSub("worldnews", "blink-182",False)
+
 
 
 
